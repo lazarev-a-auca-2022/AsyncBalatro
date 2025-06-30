@@ -1,0 +1,37 @@
+modules = ["lua"]
+
+[nix]
+channel = "stable-24_05"
+packages = ["lua5_3", "lua"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "AsyncScore Lua Test"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "asyncscore_test"
+
+[[workflows.workflow]]
+name = "AsyncScore Lua Test"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "apt-get update && apt-get install -y lua5.3 && lua5.3 -v && echo \"Lua environment ready for AsyncScore mod testing\" && echo \"Testing mod file syntax...\" && lua5.3 -l AsyncScore.lua"
+
+[[workflows.workflow]]
+name = "asyncscore_test"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "lua AsyncScore.lua"
