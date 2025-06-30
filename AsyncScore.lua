@@ -13,9 +13,14 @@
 local config = SMODS.current_mod.config or {}
 
 -- Load core modules
-local async_core = SMODS.load_file("lib/async_core.lua")()
-local performance_monitor = SMODS.load_file("lib/performance_monitor.lua")()
-local compatibility = SMODS.load_file("lib/compatibility.lua")()
+local AsyncCoreClass = SMODS.load_file("lib/async_core.lua")()
+local PerformanceMonitorClass = SMODS.load_file("lib/performance_monitor.lua")()
+local CompatibilityClass = SMODS.load_file("lib/compatibility.lua")()
+
+-- Create instances
+local async_core = AsyncCoreClass()
+local performance_monitor = PerformanceMonitorClass()
+local compatibility = CompatibilityClass()
 
 -- Global mod state
 AsyncScore = {

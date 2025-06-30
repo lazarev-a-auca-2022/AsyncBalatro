@@ -1,0 +1,71 @@
+Oops! The game crashed:
+[SMODS AsyncScore "AsyncScore.lua"]:43: attempt to index field 'performance_monitor' (a function value)
+
+Additional Context:
+Balatro Version: 1.0.1o-FULL
+Modded Version: 1.0.0~BETA-0614a-STEAMODDED
+LÖVE Version: 11.5.0
+Lovely Version: 0.8.0
+Platform: Windows
+Steamodded Mods:
+    1: Talisman by MathIsFun_, Mathguy24, jenwalter666, cg-223 [ID: Talisman, Version: 2.2.0c, Uses Lovely]
+    2: AsyncScore by AsyncScore Team [ID: AsyncScore]
+    3: Cryptid by MathIsFun_, Cryptid and Balatro Discords [ID: Cryptid, Priority: 114, Version: 0.5.9, Uses Lovely]
+Lovely Mods:
+
+Stack Traceback
+===============
+(3) Lua method 'init' at file 'AsyncScore.lua:43' (from mod with id AsyncScore)
+Local variables:
+ self = table: 0x11b9b398  {version:1.0.0, performance_monitor:function: 0x118998c0, async_core:function: 0x1196e398, setup_config_ui:function: 0x11b035d8, should_use_async:function: 0x11b9ee18 (more...)}
+ (*temporary) = Lua function '?' (defined at line 220 of chunk [SMODS AsyncScore "lib/performance_monitor.lua"])
+ (*temporary) = Lua function '?' (defined at line 220 of chunk [SMODS AsyncScore "lib/performance_monitor.lua"])
+ (*temporary) = nil
+ (*temporary) = string: "attempt to index field 'performance_monitor' (a function value)"
+(4) main chunk of file 'AsyncScore.lua' at line 173 (from mod with id AsyncScore)
+(5) Lua global 'loadMods' at Steamodded file 'src/loader.lua:571' 
+Local variables:
+ modsDirectory = string: "C:\\Users\\baisu\\AppData\\Roaming\\Balatro\\Mods"
+ header_components = table: 0x11bed148  {version:table: 0x11bed898, id:table: 0x11bed358, conflicts:table: 0x11bed788, outdated:table: 0x11bed918, prefix:table: 0x11bed838, dump_loc:table: 0x11bed9b8 (more...)}
+ json_spec = table: 0x11beda50  {version:table: 0x11bee190, id:table: 0x11bedd80, main_file:table: 0x11bee370, __:table: 0x11bee430, badge_colour:table: 0x11bee030, badge_text_colour:table: 0x11bee0b0 (more...)}
+ used_prefixes = table: 0x11bee530  {async:AsyncScore, talisman:Talisman}
+ lovely_directories = table: 0x11bee558  {1:C:\Users\baisu\AppData\Roaming\Balatro\Mods/BalatroMobileCompat-main/, 2:C:\Users\baisu\AppData\Roaming\Balatro\Mods/Cryptid/, 3:C:\Users\baisu\AppData\Roaming\Balatro\Mods/Talisman/ (more...)}
+ processDirectory = Lua function '?' (defined at line 185 of chunk [SMODS _ "src/loader.lua"])
+ keyset = table: 0x11778c38  {1:-10000, 2:0, 3:114}
+ check_dependencies = Lua function '?' (defined at line 419 of chunk [SMODS _ "src/loader.lua"])
+ (for generator) = C function: builtin#6
+ (for state) = table: 0x11778c38  {1:-10000, 2:0, 3:114}
+ (for control) = number: 2
+ _ = number: 2
+ priority = number: 0
+ (for generator) = C function: builtin#6
+ (for state) = table: 0x11bf5c70  {1:table: 0x11bf5318, 2:table: 0x11433d80}
+ (for control) = number: 1
+ _ = number: 1
+ mod = table: 0x11bf5318  {version:0.0.0, id:AsyncScore, main_file:AsyncScore.lua, can_load:true, badge_colour:table: 0x11bf56c0, badge_text_colour:table: 0x11bf5608, priority:0 (more...)}
+(6) Lua global 'initSteamodded' at Steamodded file 'src/loader.lua:654' 
+(7) Lua upvalue 'su' at file 'game.lua:218'
+Local variables:
+ self = table: 0x1141cf98  {F_GUIDE:false, F_CRASH_REPORTS:false, F_QUIT_BUTTON:true, F_ENGLISH_ONLY:false, F_VIDEO_SETTINGS:true, STAGE:1, F_MOBILE_UI:false, F_NO_SAVING:false (more...)}
+ settings = nil
+ settings_ver = nil
+ new_colour_proto = table: 0x115731e8  {Spades:table: 0x114ab040, Hearts:table: 0x115732c0, Diamonds:table: 0x11573378, Clubs:table: 0x114ab0d8}
+ sound_files = table: 0x116b8e18  {1:ambientFire1.ogg, 2:ambientFire2.ogg, 3:ambientFire3.ogg, 4:ambientOrgan1.ogg, 5:button.ogg, 6:cancel.ogg, 7:card1.ogg, 8:card3.ogg, 9:cardFan2.ogg (more...)}
+ shader_files = table: 0x117ef0f8  {1:CRT.fs, 2:background.fs, 3:booster.fs, 4:debuff.fs, 5:dissolve.fs, 6:flame.fs, 7:flash.fs, 8:foil.fs, 9:gold_seal.fs, 10:holo.fs, 11:hologram.fs (more...)}
+(8) Lua method 'start_up' at file 'main.lua:2195'
+Local variables:
+ self = table: 0x1141cf98  {F_GUIDE:false, F_CRASH_REPORTS:false, F_QUIT_BUTTON:true, F_ENGLISH_ONLY:false, F_VIDEO_SETTINGS:true, STAGE:1, F_MOBILE_UI:false, F_NO_SAVING:false (more...)}
+(9) Lua field 'load' at file 'main.lua:962'
+(10) Lua function '?' at file 'main.lua:895' (best guess)
+(11) global C function 'xpcall'
+(12) LÖVE function at file 'boot.lua:368' (best guess)
+Local variables:
+ result = boolean: true
+ main = nil
+(13) global C function 'xpcall'
+(14) LÖVE function at file 'boot.lua:377' (best guess)
+Local variables:
+ func = Lua function '(LÖVE Function)' (defined at line 355 of chunk [love "boot.lua"])
+ inerror = boolean: true
+ deferErrhand = Lua function '(LÖVE Function)' (defined at line 348 of chunk [love "boot.lua"])
+ earlyinit = Lua function '(LÖVE Function)' (defined at line 355 of chunk [love "boot.lua"])

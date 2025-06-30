@@ -18,28 +18,34 @@ SMODS = {
     },
     load_file = function(path)
         print("Loading module: " .. path)
-        -- Return a function that creates a mock object
+        -- Return a function that creates a constructor function
         return function()
             if path:find("async_core") then
-                return {
-                    init = function() end,
-                    update = function() end,
-                    calculate_hand_async = function() return 0 end,
-                    calculate_joker_async = function() return 0 end
-                }
+                return function()
+                    return {
+                        init = function() end,
+                        update = function() end,
+                        calculate_hand_async = function() return 0 end,
+                        calculate_joker_async = function() return 0 end
+                    }
+                end
             elseif path:find("performance_monitor") then
-                return {
-                    init = function() end,
-                    update = function() end,
-                    is_performance_poor = function() return false end
-                }
+                return function()
+                    return {
+                        init = function() end,
+                        update = function() end,
+                        is_performance_poor = function() return false end
+                    }
+                end
             elseif path:find("compatibility") then
-                return {
-                    check_mods = function() end,
-                    is_cryptid_joker = function() return false end
-                }
+                return function()
+                    return {
+                        check_mods = function() end,
+                        is_cryptid_joker = function() return false end
+                    }
+                end
             end
-            return {}
+            return function() return {} end
         end
     end
 }
