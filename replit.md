@@ -81,6 +81,8 @@ AsyncScore is a performance optimization mod for the card game Balatro that impl
 ```
 Changelog:
 - June 30, 2025. Initial setup
+- June 30, 2025. Fixed module instantiation crash - properly implemented constructor pattern for core modules
+- June 30, 2025. Fixed localization crash - restructured mod description format for Balatro compatibility
 ```
 
 ## User Preferences

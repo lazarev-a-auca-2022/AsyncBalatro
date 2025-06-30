@@ -7,6 +7,6 @@
     "min_steamodded_version": "1.0.0",
     "dependencies": [],
     "conflicts": [],
-    "dump_loc": false,
+    "dump_loc": true,
     "priority": -1000
 }

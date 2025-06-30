@@ -1,0 +1,82 @@
+Oops! The game crashed:
+functions/misc_functions.lua:1742: attempt to index local 'center' (a string value)
+
+Additional Context:
+Balatro Version: 1.0.1o-FULL
+Modded Version: 1.0.0~BETA-0614a-STEAMODDED
+LÖVE Version: 11.5.0
+Lovely Version: 0.8.0
+Platform: Windows
+Steamodded Mods:
+    1: Talisman by MathIsFun_, Mathguy24, jenwalter666, cg-223 [ID: Talisman, Version: 2.2.0c, Uses Lovely]
+        Break Infinity: omeganum
+    2: AsyncScore by AsyncScore Team [ID: AsyncScore]
+    3: Cryptid by MathIsFun_, Cryptid and Balatro Discords [ID: Cryptid, Priority: 114, Version: 0.5.9, Uses Lovely]
+Lovely Mods:
+
+Stack Traceback
+===============
+(3) Lua upvalue 'talismanloc' at file 'functions/misc_functions.lua:1742'
+Local variables:
+ (for generator) = C function: next
+ (for state) = table: 0x0db9e6a8  {talisman_string_A:Select features to enable:, talisman_omeganum:OmegaNum, test:j, talisman_string_E:Abort, misc:table: 0x0db695d8, talisman_string_C:Score Limit (requires game restart) (more...)}
+ (for control) = number: nan
+ g_k = string: "descriptions"
+ group = table: 0x0db9e708  {Back:table: 0x0db9e730, Unique:table: 0x0e441610, Mod:table: 0x0e5764b0, Voucher:table: 0x0db69f20, Planet:table: 0x0d811338, Edition:table: 0x0db691a0 (more...)}
+ (for generator) = C function: next
+ (for state) = table: 0x0db9e708  {Back:table: 0x0db9e730, Unique:table: 0x0e441610, Mod:table: 0x0e5764b0, Voucher:table: 0x0db69f20, Planet:table: 0x0d811338, Edition:table: 0x0db691a0 (more...)}
+ (for control) = number: nan
+ _ = string: "AsyncScore"
+ set = table: 0x0e56e998  {name:AsyncScore, text:table: 0x0e572ee8}
+ (for generator) = C function: next
+ (for state) = table: 0x0e56e998  {name:AsyncScore, text:table: 0x0e572ee8}
+ (for control) = number: nan
+ _ = string: "name"
+ center = string: "AsyncScore"
+ (*temporary) = table: 0x0e57e4a8  {}
+ (*temporary) = table: 0x0e579210  {1:Fragile Tag}
+ (*temporary) = number: 1
+ (*temporary) = nil
+ (*temporary) = nil
+ (*temporary) = number: 1
+ (*temporary) = number: 1
+ (*temporary) = table: 0x0e565d20  {1:table: 0x0e56de30}
+ (*temporary) = string: "Fragile Tag"
+ (*temporary) = table: 0x0e565d20  {1:table: 0x0e56de30}
+ (*temporary) = table: 0x0e565c90  {}
+ (*temporary) = nil
+ (*temporary) = nil
+ (*temporary) = nil
+ (*temporary) = string: "attempt to index local 'center' (a string value)"
+(4) Lua upvalue 'il' at file 'main.lua:1389'
+Local variables:
+ abc = table: 0x0e644500  {talisman_string_A:Select features to enable:, talisman_omeganum:OmegaNum, test:j, talisman_string_E:Abort, talisman_string_C:Score Limit (requires game restart) (more...)}
+(5) Lua global 'init_localization' at file 'lib/overrides.lua:1356' (from mod with id Cryptid)
+(6) Lua upvalue 'inj' at Steamodded file 'src/loader.lua:614' 
+(7) Lua field 'injectItems' at file 'Cryptid.lua:174' (from mod with id Cryptid)
+(8) Lua global 'initSteamodded' at Steamodded file 'src/loader.lua:658' 
+(9) Lua upvalue 'su' at file 'game.lua:218'
+Local variables:
+ self = table: 0x0d8362a8  {F_GUIDE:false, F_CRASH_REPORTS:false, F_QUIT_BUTTON:true, F_ENGLISH_ONLY:false, F_VIDEO_SETTINGS:true, STAGE:1, F_MOBILE_UI:false, F_NO_SAVING:false (more...)}
+ settings = nil
+ settings_ver = nil
+ new_colour_proto = table: 0x0d7bcd48  {Spades:table: 0x0d82e140, Hearts:table: 0x0d82dfd0, Diamonds:table: 0x0d82e068, Clubs:table: 0x0d82e1d8}
+ sound_files = table: 0x0dc807c0  {1:ambientFire1.ogg, 2:ambientFire2.ogg, 3:ambientFire3.ogg, 4:ambientOrgan1.ogg, 5:button.ogg, 6:cancel.ogg, 7:card1.ogg, 8:card3.ogg, 9:cardFan2.ogg (more...)}
+ shader_files = table: 0x0da2aea0  {1:CRT.fs, 2:background.fs, 3:booster.fs, 4:debuff.fs, 5:dissolve.fs, 6:flame.fs, 7:flash.fs, 8:foil.fs, 9:gold_seal.fs, 10:holo.fs, 11:hologram.fs (more...)}
+(10) Lua method 'start_up' at file 'main.lua:2195'
+Local variables:
+ self = table: 0x0d8362a8  {F_GUIDE:false, F_CRASH_REPORTS:false, F_QUIT_BUTTON:true, F_ENGLISH_ONLY:false, F_VIDEO_SETTINGS:true, STAGE:1, F_MOBILE_UI:false, F_NO_SAVING:false (more...)}
+(11) Lua field 'load' at file 'main.lua:962'
+(12) Lua function '?' at file 'main.lua:895' (best guess)
+(13) global C function 'xpcall'
+(14) LÖVE function at file 'boot.lua:368' (best guess)
+Local variables:
+ result = boolean: true
+ main = nil
+(15) global C function 'xpcall'
+(16) LÖVE function at file 'boot.lua:377' (best guess)
+Local variables:
+ func = Lua function '(LÖVE Function)' (defined at line 355 of chunk [love "boot.lua"])
+ inerror = boolean: true
+ deferErrhand = Lua function '(LÖVE Function)' (defined at line 348 of chunk [love "boot.lua"])
+ earlyinit = Lua function '(LÖVE Function)' (defined at line 355 of chunk [love "boot.lua"])

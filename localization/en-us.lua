@@ -1,12 +1,14 @@
 -- English localization for AsyncScore
 return {
     descriptions = {
-        AsyncScore = {
-            name = "AsyncScore",
-            text = {
-                "Asynchronous scoring optimization",
-                "Reduces lag in heavily modded games",
-                "Compatible with {C:attention}Cryptid{} and {C:attention}Talisman{}"
+        Mod = {
+            AsyncScore = {
+                name = "AsyncScore",
+                text = {
+                    "Asynchronous scoring optimization",
+                    "Reduces lag in heavily modded games",
+                    "Compatible with {C:attention}Cryptid{} and {C:attention}Talisman{}"
+                }
             }
         }
     },

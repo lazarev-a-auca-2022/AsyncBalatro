@@ -16,6 +16,10 @@ author = "agent"
 task = "workflow.run"
 args = "AsyncScore Test"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Localization Test"
+
 [[workflows.workflow]]
 name = "AsyncScore Test"
 author = "agent"
@@ -23,3 +27,11 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "lua test_runner.lua"
+
+[[workflows.workflow]]
+name = "Localization Test"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "lua localization_test.lua"
