@@ -1,7 +1,7 @@
 -- AsyncScore Configuration
 return {
     -- Performance settings
-    complexity_threshold = 10,          -- Number of jokers before async kicks in
+    complexity_threshold = 1,          -- Number of jokers before async kicks in
     max_operations_per_frame = 50,      -- Max operations per frame in async mode
     performance_monitoring = true,      -- Enable performance monitoring
     
