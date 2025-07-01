@@ -160,6 +160,27 @@ function AsyncScore:setup_config_ui()
             type = "toggle",
             default = true
         })
+        
+        -- Retrigger optimization setting
+        config_tab:add_setting({
+            id = "retrigger_optimization",
+            name = "Retrigger Optimization",
+            desc = "Fast retrigger processing (requires Talisman's 'Disable Scoring Animations')",
+            type = "toggle",
+            default = true
+        })
+        
+        -- Retrigger batch size setting
+        config_tab:add_setting({
+            id = "retrigger_batch_size",
+            name = "Retrigger Batch Size",
+            desc = "Maximum number of retriggers to process together",
+            type = "slider",
+            min = 5,
+            max = 50,
+            default = 10,
+            step = 1
+        })
     end
 end
 
