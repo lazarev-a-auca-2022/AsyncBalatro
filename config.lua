@@ -34,6 +34,12 @@ return {
     show_performance_overlay = false,  -- Show performance info overlay
     overlay_position = "top_right",    -- Position of overlay
     
+    -- Retrigger optimization (requires Talisman's "Disable Scoring Animations")
+    retrigger_optimization = true,     -- Enable fast retrigger processing
+    retrigger_batch_size = 5,         -- Max retriggers to batch together
+    retrigger_batch_timeout = 0.1,     -- Max time to wait for batch completion (seconds)
+    safe_retrigger_caching = true,     -- Cache retrigger results for known safe jokers
+    
     -- Experimental features
     predictive_caching = false,        -- Predict and pre-cache likely calculations
     distributed_processing = false,    -- Distribute calculations across multiple coroutines
