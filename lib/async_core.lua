@@ -8,7 +8,10 @@ function AsyncCore:new()
         max_operations_per_frame = 50,
         current_frame_operations = 0,
         calculation_queue = {},
-        results_cache = {}
+        results_cache = {},
+        retrigger_batches = {},
+        max_batch_size = 10,
+        batch_timeout = 0.1 -- seconds
     }
     setmetatable(obj, {__index = self})
     return obj
@@ -20,6 +23,7 @@ function AsyncCore:init()
     self.pending_calculations = {}
     self.calculation_queue = {}
     self.results_cache = {}
+    self.retrigger_batches = {}
 end
 
 -- Main update function called each frame
@@ -34,6 +38,77 @@ function AsyncCore:update(dt)
     
     -- Clean up completed calculations
     self:cleanup_completed()
+    
+    -- Clean up expired retrigger batches
+    self:cleanup_retrigger_batches()
+end
+
+-- Clean up expired retrigger batches
+function AsyncCore:cleanup_retrigger_batches()
+    local current_time = love.timer.getTime()
+    
+    for batch_key, batch in pairs(self.retrigger_batches) do
+        if current_time - batch.created_time > self.batch_timeout then
+            -- Process the batch even if it's not full
+            self:process_retrigger_batch(batch_key)
+        end
+    end
+end
+
+-- Cache joker result with retrigger optimization metadata
+function AsyncCore:cache_joker_result(calculation_id, result, calculation)
+    local cached_entry = {
+        result = result,
+        retriggerable = self:is_result_retriggerable(result, calculation),
+        timestamp = love.timer.getTime(),
+        joker_key = calculation.card.config and calculation.card.config.center and calculation.card.config.center.key,
+        talisman_fast_mode = calculation.talisman_fast_mode
+    }
+    
+    self.results_cache[calculation_id] = cached_entry
+    
+    if AsyncScore.debug and cached_entry.retriggerable then
+        print("[AsyncScore] Cached retriggerable result: " .. calculation_id)
+    end
+end
+
+-- Determine if a result can be safely reused for retriggers
+function AsyncCore:is_result_retriggerable(result, calculation)
+    -- Only allow retrigger caching when Talisman fast mode is enabled
+    if not calculation.talisman_fast_mode then
+        return false
+    end
+    
+    -- Check if this is a deterministic joker effect
+    local card = calculation.card
+    if not card or not card.config or not card.config.center then
+        return false
+    end
+    
+    local joker_key = card.config.center.key
+    
+    -- Safe jokers that produce consistent retrigger results
+    local safe_retrigger_jokers = {
+        -- Basic multipliers
+        "j_joker", "j_greedy_joker", "j_lusty_joker", "j_wrathful_joker",
+        "j_glutton_joker", "j_jolly_joker", "j_zany_joker", "j_mad_joker",
+        "j_crazy_joker", "j_droll_joker", "j_sly_joker", "j_wily_joker",
+        "j_clever_joker", "j_devious_joker", "j_crafty_joker",
+        
+        -- Most Cryptid jokers are safe for retriggers when animations disabled
+        "cry_", -- Cryptid prefix
+        "m_" -- M jokers prefix
+    }
+    
+    -- Check if this joker is safe for retrigger caching
+    for _, safe_pattern in ipairs(safe_retrigger_jokers) do
+        if string.find(joker_key, safe_pattern) then
+            return true
+        end
+    end
+    
+    -- Conservative approach: only cache known safe jokers
+    return false
 end
 
 -- Async hand calculation
@@ -81,13 +156,27 @@ function AsyncCore:calculate_hand_async(cards, hand, mult, base_mult, base_scori
     return self:get_placeholder_result(cards, hand, mult, base_mult)
 end
 
--- Async joker calculation
+-- Async joker calculation with Talisman-dependent retrigger optimization
 function AsyncCore:calculate_joker_async(card, context, original_func)
     local calculation_id = self:generate_joker_id(card, context)
     
-    -- Check cache
+    -- Check if Talisman's "Disable Scoring Animations" is enabled
+    local talisman_fast_mode = self:is_talisman_fast_mode_enabled()
+    local is_retrigger = context and context.retrigger_joker
+    
+    -- Enhanced caching for retriggers when Talisman fast mode is active
     if self.results_cache[calculation_id] then
-        return self.results_cache[calculation_id]
+        local cached_result = self.results_cache[calculation_id]
+        
+        -- Fast retrigger optimization only when Talisman animations are disabled
+        if is_retrigger and talisman_fast_mode and cached_result.retriggerable then
+            if AsyncScore.debug then
+                print("[AsyncScore] Fast retrigger cache hit (Talisman mode): " .. calculation_id)
+            end
+            return cached_result.result
+        elseif not is_retrigger then
+            return cached_result.result or cached_result
+        end
     end
     
     -- Create async joker calculation
@@ -99,12 +188,24 @@ function AsyncCore:calculate_joker_async(card, context, original_func)
         original_func = original_func,
         status = "pending",
         result = nil,
-        coroutine = nil
+        coroutine = nil,
+        is_retrigger = is_retrigger,
+        retrigger_count = context and context.retrigger_count or 0,
+        talisman_fast_mode = talisman_fast_mode
     }
     
-    calculation.coroutine = coroutine.create(function()
-        return self:_calculate_joker_coroutine(calculation)
-    end)
+    -- Use different processing strategies based on Talisman mode
+    if is_retrigger and talisman_fast_mode then
+        -- Ultra-fast retrigger processing when animations are disabled
+        calculation.coroutine = coroutine.create(function()
+            return self:_calculate_fast_retrigger_coroutine(calculation)
+        end)
+    else
+        -- Standard async processing
+        calculation.coroutine = coroutine.create(function()
+            return self:_calculate_joker_coroutine(calculation)
+        end)
+    end
     
     self.pending_calculations[calculation_id] = calculation
     
@@ -113,7 +214,9 @@ function AsyncCore:calculate_joker_async(card, context, original_func)
     if success and coroutine.status(calculation.coroutine) == "dead" then
         calculation.status = "completed" 
         calculation.result = result
-        self.results_cache[calculation_id] = result
+        
+        -- Enhanced caching for retrigger scenarios
+        self:cache_joker_result(calculation_id, result, calculation)
         return result
     end
     
@@ -168,6 +271,132 @@ function AsyncCore:_calculate_joker_coroutine(calculation)
     
     -- Execute original joker function
     return calculation.original_func(card, context)
+end
+
+-- Fast retrigger calculation coroutine (only when Talisman animations disabled)
+function AsyncCore:_calculate_fast_retrigger_coroutine(calculation)
+    local card, context = calculation.card, calculation.context
+    
+    -- Skip animation delays and yield checks for maximum speed
+    -- This is safe only when Talisman has disabled scoring animations
+    
+    if AsyncScore.debug then
+        print("[AsyncScore] Fast retrigger processing: " .. (card.config.center.key or "unknown"))
+    end
+    
+    -- Check if we can batch this retrigger with similar ones
+    local batch_key = self:get_retrigger_batch_key(card, context)
+    if self.retrigger_batches[batch_key] then
+        -- Add to existing batch
+        table.insert(self.retrigger_batches[batch_key].calculations, calculation)
+        
+        -- If batch is full, process all at once
+        if #self.retrigger_batches[batch_key].calculations >= self.max_batch_size then
+            return self:process_retrigger_batch(batch_key)
+        else
+            -- Wait for more retriggerable
+            return self.retrigger_batches[batch_key].base_result
+        end
+    else
+        -- Create new batch
+        self.retrigger_batches[batch_key] = {
+            calculations = {calculation},
+            base_result = calculation.original_func(card, context),
+            created_time = love.timer.getTime()
+        }
+        
+        return self.retrigger_batches[batch_key].base_result
+    end
+end
+
+-- Check if Talisman's "Disable Scoring Animations" setting is enabled
+function AsyncCore:is_talisman_fast_mode_enabled()
+    -- Check Talisman's settings for disabled animations
+    if G and G.SETTINGS and G.SETTINGS.TALISMAN then
+        local talisman_settings = G.SETTINGS.TALISMAN
+        
+        -- Check for the disable animations setting
+        if talisman_settings.disable_anims or 
+           talisman_settings.disable_scoring_anims or
+           talisman_settings.fast_scoring then
+            return true
+        end
+    end
+    
+    -- Fallback: check if Talisman functions indicate fast mode
+    if SMODS and SMODS.Mods and SMODS.Mods.Talisman then
+        local talisman_mod = SMODS.Mods.Talisman
+        if talisman_mod.config and talisman_mod.config.disable_anims then
+            return true
+        end
+    end
+    
+    -- Check global settings that might indicate fast mode
+    if G and G.SETTINGS then
+        if G.SETTINGS.fast_play or 
+           G.SETTINGS.reduced_motion or
+           G.SETTINGS.disable_bg_anims then
+            return true
+        end
+    end
+    
+    return false
+end
+
+-- Get batch key for grouping similar retriggers
+function AsyncCore:get_retrigger_batch_key(card, context)
+    local card_key = card.config and card.config.center and card.config.center.key or "unknown"
+    local context_type = context and context.cardarea and context.cardarea.config.type or "unknown"
+    local hand_type = context and context.scoring_hand or "unknown"
+    
+    return card_key .. "_" .. context_type .. "_" .. hand_type
+end
+
+-- Process a batch of similar retriggers for maximum efficiency
+function AsyncCore:process_retrigger_batch(batch_key)
+    local batch = self.retrigger_batches[batch_key]
+    if not batch then return {} end
+    
+    local base_result = batch.base_result
+    local calculation_count = #batch.calculations
+    
+    if AsyncScore.debug then
+        print("[AsyncScore] Processing retrigger batch: " .. batch_key .. " (" .. calculation_count .. " calculations)")
+    end
+    
+    -- For retriggers, we can often multiply or accumulate the base result
+    -- This is much faster than recalculating each individually
+    local optimized_result = self:optimize_batch_result(base_result, calculation_count, batch.calculations[1])
+    
+    -- Clean up the batch
+    self.retrigger_batches[batch_key] = nil
+    
+    return optimized_result
+end
+
+-- Optimize the result for batched retriggers
+function AsyncCore:optimize_batch_result(base_result, count, sample_calculation)
+    if not base_result or count <= 1 then
+        return base_result
+    end
+    
+    -- For most jokers, retriggers simply multiply the effect
+    if type(base_result) == "table" then
+        local optimized = {}
+        for key, value in pairs(base_result) do
+            if type(value) == "number" then
+                -- Multiply numeric values by retrigger count
+                optimized[key] = value * count
+            else
+                optimized[key] = value
+            end
+        end
+        return optimized
+    elseif type(base_result) == "number" then
+        return base_result * count
+    end
+    
+    return base_result
 end
 
 -- Process calculation queue
